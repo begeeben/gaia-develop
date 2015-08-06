@@ -1,0 +1,25 @@
+{
+  "name": "gaia-develop",
+  "description": "Develop Gaia apps with live reload",
+  "version": "0.1.0",
+  "author": "Yi-Fan Liao <yliao@mozilla.com>",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/begeeben/gaia-develop"
+  },
+  "dependencies": {
+    "chokidar": "^1.0.5",
+    "firefox-client": "^0.3.0",
+    "node-firefox-find-ports": "^1.2.0"
+  },
+  "keywords": [
+    "firefox",
+    "firefox os",
+    "gaia",
+    "live reload"
+  ],
+  "bin": {
+    "gaia-develop": "./index.js"
+  }
+}
