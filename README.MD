@@ -5,6 +5,8 @@ This module currently only works on Mac.
 
 * Download b2g desktop from https://ftp.mozilla.org/pub/mozilla.org/b2g/nightly/latest-mozilla-central/ .
 * Put b2g.app in Applications folder.
+* Use node.js 0.12.7. May run into problems in the watch functionality with chokidar.
+
 ## Installation
 ```bash
 npm install -g gaia-develop
@@ -18,4 +20,5 @@ gaia-develop b2g phone [appName]
 ```bash
 gaia-develop b2g phone sms
 ```
-
+## Known Issues
+https://github.com/begeeben/gaia-develop/issues

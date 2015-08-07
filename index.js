@@ -60,7 +60,11 @@ function watch () {
 }
 
 function reload() {
-  runtime.reload(app);
+  if (deviceType === 'tv') {
+    runtime.reopen();
+  } else {
+    runtime.reload(app);
+  }
 }
 
 makeGaia.run(function () {
