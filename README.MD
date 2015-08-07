@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/gaia-develop.png?compact=true)](https://nodei.co/npm/gaia-develop/)
+
 # gaia-develop
 Developing gaia was always more cumbersome to me comparing to developing web apps. The main difference is that live reload is broadly supported for developing web apps. This project aims to remove this gap by providing live reload to gaia app development.
 
