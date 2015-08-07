@@ -25,8 +25,8 @@ var tvApps = fs.readdirSync(path.join(process.cwd(), 'tv_apps')).filter(function
 
 // Default runtime and device type
 var runtimeType = 'b2g';
-var deviceType = 'tv';
-var app;
+var deviceType = 'phone';
+var app = '';
 
 process.argv.forEach(function(val, index, array) {
   if (runtimeTypes.indexOf(val) > -1) {
@@ -47,7 +47,11 @@ function watch () {
 
   function onfilechange (path) {
     console.log('File', path, 'has been changed');
-    makeApp.run(reload);
+    if (!app) {
+      make.run(reload);
+    } else {
+      makeApp.run(reload);
+    }
   }
 
   var watcher = chokidar.watch(['apps', 'tv_apps', 'shared'], {
@@ -60,7 +64,7 @@ function watch () {
 }
 
 function reload() {
-  if (deviceType === 'tv') {
+  if (deviceType === 'tv' || !app || app === 'system') {
     runtime.reopen();
   } else {
     runtime.reload(app);
