@@ -16,12 +16,17 @@ var Runtime = require('./lib/runtime');
 var runtimeTypes = ['firefox', 'developer', 'b2g', 'mulet', 'nightly', 'simulator'];
 var deviceTypes = ['phone', 'tv'];
 
-var apps = fs.readdirSync(path.join(process.cwd(), 'apps')).filter(function(file) {
-  return fs.statSync(path.join(path.join(process.cwd(), 'apps'), file)).isDirectory();
-});
-var tvApps = fs.readdirSync(path.join(process.cwd(), 'tv_apps')).filter(function(file) {
-  return fs.statSync(path.join(path.join(process.cwd(), 'tv_apps'), file)).isDirectory();
-});
+var appsPath = path.join(process.cwd(), 'apps');
+var apps = fs.existsSync(appsPath) ?
+  fs.readdirSync(appsPath).filter(function(file) {
+    return fs.statSync(path.join(appsPath, file)).isDirectory();
+  }) : [];
+
+var tvAppsPath = path.join(process.cwd(), 'tv_apps');
+var tvApps = fs.existsSync(tvAppsPath) ?
+  fs.readdirSync(tvAppsPath).filter(function(file) {
+    return fs.statSync(path.join(tvAppsPath, file)).isDirectory();
+  }) : [];
 
 // Default runtime and device type
 var runtimeType = 'b2g';
@@ -33,7 +38,8 @@ process.argv.forEach(function(val, index, array) {
     runtimeType = val;
   } else if (deviceTypes.indexOf(val) > -1) {
     deviceType = val;
-  } else if (apps.indexOf(val) > -1 || tvApps.indexOf(val) > -1) {
+  } else if ((apps && apps.indexOf(val) > -1) ||
+             (tvApps && tvApps.indexOf(val) > -1)) {
     app = val;
   }
 });
@@ -55,6 +61,7 @@ function watch () {
   }
 
   var watcher = chokidar.watch(['apps', 'tv_apps', 'shared'], {
+    ignored: /build_stage/,
     persistent: true,
     cwd: process.cwd()
   });
@@ -64,11 +71,7 @@ function watch () {
 }
 
 function reload() {
-  if (deviceType === 'tv' || !app || app === 'system') {
-    runtime.reopen();
-  } else {
-    runtime.reload(app);
-  }
+  runtime.reopen();
 }
 
 makeGaia.run(function () {
