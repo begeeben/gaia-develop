@@ -7,9 +7,10 @@
 
 var fs = require('fs');
 var path = require('path');
-// var exec = require('child_process').exec;
 var chokidar = require('chokidar');
 
+
+var config = require('./lib/config');
 var Make = require('./lib/make');
 var Runtime = require('./lib/runtime');
 
@@ -29,8 +30,8 @@ var tvApps = fs.existsSync(tvAppsPath) ?
   }) : [];
 
 // Default runtime and device type
-var runtimeType = 'b2g';
-var deviceType = 'phone';
+var runtimeType = config.defaultRuntimeType;
+var deviceType = config.defaultDeviceType;
 var app = '';
 
 process.argv.forEach(function(val, index, array) {
@@ -48,30 +49,46 @@ var makeGaia = new Make(deviceType);
 var makeApp = new Make(deviceType, app);
 var runtime = new Runtime(runtimeType, deviceType);
 
-function watch () {
-  console.log('watch');
+var watcher;
 
-  function onfilechange (path) {
-    console.log('File', path, 'has been changed');
-    if (!app) {
-      make.run(reload);
-    } else {
-      makeApp.run(reload);
-    }
+function onfilechange (path) {
+  console.log('File', path, 'has been changed');
+
+  watcher.close();
+  if (!app) {
+    makeGaia.run(function () {
+      reload();
+      watch();
+    });
+  } else {
+    makeApp.run(function () {
+      reload();
+      watch();
+    });
   }
+}
 
-  var watcher = chokidar.watch(['apps', 'tv_apps', 'shared'], {
+function watch () {
+  console.log('watch file changes...\n');
+
+  watcher = chokidar.watch(['apps', 'tv_apps', 'shared'], {
     ignored: /build_stage/,
     persistent: true,
     cwd: process.cwd()
   });
-  // watcher.add('tv_apps');
-  // watcher.add('shared');
+
   watcher.on('change', onfilechange);
 }
 
+// Apps that doesn't work with 'install and relaunch'
+var needB2gReopenList = config.needB2gReopenList;
+
 function reload() {
-  runtime.reopen();
+  if (deviceType === 'tv' || !app || needB2gReopenList.indexOf(app) > -1) {
+    runtime.reopen();
+  } else {
+    runtime.reload(app);
+  }
 }
 
 makeGaia.run(function () {
