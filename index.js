@@ -85,13 +85,21 @@ var needB2gReopenList = config.needB2gReopenList;
 
 function reload() {
   if (deviceType === 'tv' || !app || needB2gReopenList.indexOf(app) > -1) {
-    runtime.reopen();
+    if (app && app !== 'system' && app !== 'smart-system') {
+      runtime.reopen(app);
+    } else {
+      runtime.reopen();
+    }
   } else {
     runtime.reload(app);
   }
 }
 
 makeGaia.run(function () {
-  runtime.start();
+  if (app && app !== 'system' && app !== 'smart-system') {
+    runtime.start(app);
+  } else {
+    runtime.start();
+  }
   watch();
 });
