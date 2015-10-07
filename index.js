@@ -99,26 +99,30 @@ var needB2gReopenList = config.needB2gReopenList;
 function reload() {
   if (deviceType === 'tv' || !app || needB2gReopenList.indexOf(app) > -1) {
     if (app && app !== 'system' && app !== 'smart-system') {
-      runtime.start(app);
+      runtime.start(app, onRuntimeClose);
     } else {
-      runtime.start();
+      runtime.start(null, onRuntimeClose);
     }
   } else {
     runtime.reload(app);
   }
 }
 
+function onRuntimeClose () {
+  process.exit();
+}
+
 makeGaia.run(function () {
   if (app && app !== 'system' && app !== 'smart-system') {
-    runtime.start(app);
+    runtime.start(app, onRuntimeClose);
   } else {
-    runtime.start();
+    runtime.start(null, onRuntimeClose);
   }
   watch();
 });
 
 function exitHandler(options, err) {
-  runtime.stop();
+  runtime.isRunning && runtime.stop();
 
   if (options.cleanup) console.log('clean');
   if (err) console.log(err.stack);
