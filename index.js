@@ -1,9 +1,17 @@
 #! /usr/bin/env node
 
-// Usage: node make_onsave.js b2g tv browser
-//        node make_onsave.js nightly phone settings
-//        node make_onsave.js simulator tv tv-deck
-//        node make_onsave.js b2g tv
+// Usage: In gaia folder
+//
+//        node PATH_TO_GAIA_DEVELOP/index.js b2g tv browser
+//        node PATH_TO_GAIA_DEVELOP/index.js simulator tv tv-deck
+//        node PATH_TO_GAIA_DEVELOP/index.js b2g tv
+//        node PATH_TO_GAIA_DEVELOP/index.js tv
+//        node PATH_TO_GAIA_DEVELOP/index.js tv browser
+//
+//        node PATH_TO_GAIA_DEVELOP/index.js nightly phone settings
+//        node PATH_TO_GAIA_DEVELOP/index.js sms
+//        node PATH_TO_GAIA_DEVELOP/index.js
+//
 
 var fs = require('fs');
 var path = require('path');
@@ -55,6 +63,11 @@ function onfilechange (path) {
   console.log('File', path, 'has been changed');
 
   watcher.close();
+
+  if (deviceType === 'tv' || !app || needB2gReopenList.indexOf(app) > -1) {
+    runtime.stop();
+  }
+
   if (!app) {
     makeGaia.run(function () {
       reload();
@@ -86,9 +99,9 @@ var needB2gReopenList = config.needB2gReopenList;
 function reload() {
   if (deviceType === 'tv' || !app || needB2gReopenList.indexOf(app) > -1) {
     if (app && app !== 'system' && app !== 'smart-system') {
-      runtime.reopen(app);
+      runtime.start(app);
     } else {
-      runtime.reopen();
+      runtime.start();
     }
   } else {
     runtime.reload(app);
