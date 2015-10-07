@@ -1,7 +1,7 @@
 {
   "name": "gaia-develop",
   "description": "Develop Gaia apps with live reload",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "Yi-Fan Liao <yliao@mozilla.com>",
   "main": "index.js",
   "repository": {
